@@ -1,7 +1,7 @@
 # OxygenDynamics_Public
 Optical investigation of oxygen dynamics in the murine cortex
 
-This is a collection of routines for the detection and analysis of spatiotemporal oxygen dynamics in the mouse barrel cortex (Beinlich et al XXXX)
+This is a collection of routines for the detection and analysis of spatiotemporal oxygen dynamics in the mouse barrel cortex 
 
 OxygenDynamics_Wrapper imports a csv file with paths and metadata of data folders that contain motion corrected (and denoised) oxygen imaging data, and if applicable behavioural data. It calls two analysis scripts:
 
@@ -19,4 +19,4 @@ OxygenDynamics_Stats imports the same csv file OxygenDynamics_Wrapper used, find
 
 Distributions and averages are exported as csv to be plotted in other software (e.g. graphpad)
 
-A generalized mixed-effects modelling approach is used for testing of hypotheses.
+
