@@ -1,0 +1,5 @@
+Paths,PostureFile,PupilFile,PuffsFile,Mouse,Genotype,Condition,DrugID,Promoter,SampleF,Pixelsize,Puff_2use
+Example_data\ID03_20201204,,,,23,WT,Awake,KX,GFAP,1,2.5,1 2 4 5
+Example_data\ID03_20210205,,,,23,WT,Anesth,KX,GFAP,1,2.5,3 4 5 6
+Example_data\ID60_20201127,,,,24,WT,Anesth,Iso,GFAP,1,2.5,1 2 3 4 5 6
+Example_data\ID25_20201020,ID25_behavior_0DLC_resnet50_Posture4Sep13shuffle1_403000,ID25_pupil_0DLC_resnet50_Pupil_Diameter_CernaOct15shuffle1_500000,2020_10_20_0013,25,WT,Awake,Iso,GFAP,1,2.5,2 3 5 6
