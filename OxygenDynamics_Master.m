@@ -74,7 +74,7 @@ end
 DatafileID=Tifffiles(1).folder(max(strfind(Tifffiles(1).folder,'\'))+1:end);
 
 %that is the recording duration 
-RecDur=size(IM_Raw,3)*fs;
+RecDur=size(IM_Raw,3)/fs;
  
 clear k DIR 
 
@@ -108,11 +108,21 @@ for f=1:length(Miu_Notrend)
 end
 % convert to single to save some memory
 AboveMean=single(AboveMean);
-% I then collapse across the frames
+% I then collapse across the frames by getting the average value for each
+% pixel. If it is 1 this means it was always above mean if it is closest to
+% 0 this means that was never above mean. 
 CollapsedArea=squeeze(mean(AboveMean,3));
 
 % Get the pixels that are above the 30th percentile. This is a bit arbitrary and could change. 
+% In that way pixels with 
 Aboveback=CollapsedArea>prctile(CollapsedArea(:),30);
+
+if size(AboveMean,3)<600 %for short recordings (less than 10minutes) modify the definition. 
+    % Get the pixels that are above the 20th percentile. This is a bit arbitrary and could change. 
+    Aboveback=CollapsedArea>prctile(CollapsedArea(:),20);
+
+end
+
 
 % Copying Aboveback variable to use it for filterring out sinks and sources
 % that are not part of therec area
@@ -1552,10 +1562,30 @@ for i=1:size(Overall_OxygenSurges_Pxllist,1)
         
         %getting the normalised amplitude of each event as the mean surge loci signal during the duration of the event divided by...
         %the mean surge loci signal during the minimum inter-event period before(or after) the event         
-        if eventstemp(q).PixelIdxList(1)-20>1 %checking if the event happened at the very beggining        
-            NormOxySurgeAmp{i}(q)=abs(mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList))/mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList(1)-20:eventstemp(q).PixelIdxList(1)-1)));
-        else
+        if eventstemp(q).PixelIdxList(1)-20<1 && eventstemp(q).PixelIdxList(end)+20<size(Mean_OxySurge_TraceZ(i,:),2)+1 %checking if the event happened at the very beggining and finished not too close to the end
+            %if it did take the 20 frames after the event as a baseline
             NormOxySurgeAmp{i}(q)=abs(mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList))/mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList(end)+1:eventstemp(q).PixelIdxList(end)+20)));
+        elseif eventstemp(q).PixelIdxList(end)+20>size(Mean_OxySurge_TraceZ(i,:),2) && eventstemp(q).PixelIdxList(1)-20>0 % check if it happend too close in the end and started not too close to the start 
+            %if it did take the 20 frames before the start as a baseline
+            NormOxySurgeAmp{i}(q)=abs(mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList))/mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList(1)-20:eventstemp(q).PixelIdxList(1)-1)));
+        elseif eventstemp(q).PixelIdxList(1)-20>0 && eventstemp(q).PixelIdxList(end)+20<size(Mean_OxySurge_TraceZ(i,:),2)+1 %check if the event was neith close to begining nor the end of the recording
+            %if it did take the 20 frames before the start as a baseline
+            NormOxySurgeAmp{i}(q)=abs(mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList))/mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList(1)-20:eventstemp(q).PixelIdxList(1)-1)));
+        else % if the recording is too short there is a posibility that the surge event can be close to the start and the end 
+
+            %check from which side I have more space to take baseline 
+            if eventstemp(q).PixelIdxList(1)-20 > size(Mean_OxySurge_TraceZ(i,:),2)-(eventstemp(q).PixelIdxList(end)+20) % if there is more space at the start
+            
+                %take baseline from the start of recording to the start of
+                %the surge
+                NormOxySurgeAmp{i}(q)=abs(mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList))/mean(Mean_OxySurge_TraceZ(i,1:eventstemp(q).PixelIdxList(1)-1)));
+
+            else % if not
+
+                %take baseline from the end of the surge to the end of recording
+                NormOxySurgeAmp{i}(q)=abs(mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList))/mean(Mean_OxySurge_TraceZ(i,eventstemp(q).PixelIdxList(end)+1:end)));
+            end
+
         end
         %Calculating an index (size of pocket end minuse the end of event)/size at the start of the event
         Size_Surge_modulation{i}(q)= (length(Overall_OxygenSurges_Pxllist{i,eventstemp(q).PixelIdxList(end)})-length(Overall_OxygenSurges_Pxllist{i,eventstemp(q).PixelIdxList(1)}))...
