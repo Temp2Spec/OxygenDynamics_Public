@@ -4,7 +4,7 @@
 % Center for Translational Neuromedicine
 % University of Copenhagen, 28 Sep 2023
 
-% Last updated 2 October 2023
+% Last updated 9 July 2024
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -15,9 +15,9 @@ clear;
 
 
 Masterfolder=pwd;
-InputD=readtable('ios_stack.csv','Delimiter',',');
+InputD=readtable('Data.csv','Delimiter',',');
 if size(InputD,2)<2
-    InputD=readtable('ios_stack.csv' );
+    InputD=readtable('Data.csv' );
 end
 
 %%
@@ -592,6 +592,13 @@ end
 
 Mice_unique=uniqueStrCell(Eventspecificmetrics.Mouse);
 Conditions_unique=uniqueStrCell(Eventspecificmetrics.Condition);
+% This is to convert numerical values in strings to make value filterring
+%w ork later in the script
+isNumericArray = cellfun(@isnumeric, Eventspecificmetrics.DrugID);
+if all(isNumericArray)
+    % Convert all numeric elements to strings using cellfun
+    Eventspecificmetrics.DrugID = cellfun(@num2str, Eventspecificmetrics.DrugID, 'UniformOutput', false);
+end
 Drugs_unique=uniqueStrCell(Eventspecificmetrics.DrugID);
 StimCond_unique=unique(Table_OxygenSinks_OutCombo.PuffStim); %with or without you
 
@@ -614,7 +621,7 @@ end
 
 fprintf(['The within subjects grouping variable Stimulation has ', num2str(length(StimCond_unique)), ' levels... \n']); 
 for i=1:length(StimCond_unique)
-    if StimCond_unique(i)
+    if logical(StimCond_unique(i))
        fprintf('With stimulation \n');
     else
         fprintf('Without stimulation \n');

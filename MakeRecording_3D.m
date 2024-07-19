@@ -4,6 +4,7 @@
 % Center for Translational Neuromedicine
 % University of Copenhagen, August 2023
 
+Last update 30 Jan 2024
 %%
 close all;
 clear;
@@ -18,7 +19,15 @@ answer1 = questdlg('Do you want to save a vector? (takes long time)',...
     'Vector graphics?',...
     'Yes', 'No','No');
 
+%% Ask for user input for pixel size
+prompt = 'What is the pixel size (um/pixel)?';
+dlgTitle = 'Pixel';
+numLines = 2;
+defaultInput = {'2.35'};  % Default value
 
+userInput = inputdlg(prompt, dlgTitle, numLines, defaultInput);
+
+pxl_size=str2double(userInput{1});
 %% Load the data
 
 DIR = fullfile(filepath,'\', filename);
@@ -26,8 +35,20 @@ DIR = fullfile(filepath,'\', filename);
 
 % Dimensions of the matrix
 [M, N, P] = size(RecordingBW);
+
 %%
-Epoch = questdlg('Do you want a different colour for a portion of the recording',...
+if P<1200
+
+    P_small= P;
+    tempadd=single(zeros(M,N,1200-P));
+
+    RecordingBW=cat(3,RecordingBW,tempadd);
+
+    [M, N, P] = size(RecordingBW);
+
+end
+%%
+Epoch = questdlg('Do you have distinct recording periods you want colour differently?',...
     'What data',...
     'Yes', 'No','No');
 
@@ -35,10 +56,8 @@ Epoch = questdlg('Do you want a different colour for a portion of the recording'
 switch Epoch
     case 'Yes'
 
-        c2 = uisetcolor([1 0.4470 0.7410]);
-
         % Ask for user input for start and end along the z-axis
-        prompt = 'Enter the start and end of the period with different colour in seconds (e.g. 6301,600).';
+        prompt = 'Enter the start(s) and end(s) of the periods in frames (e.g. start1,end1,start2,end2).';
         dlgTitle = 'Epoch start-end';
         numLines = 2;
         defaultInput = {'301,600'};  % Default values in the input fields
@@ -76,7 +95,41 @@ switch Epoch
   
         end
 
-        
+      if length(startZ)<2
+
+          c2 = uisetcolor([1 0.4470 0.7410]);
+          
+          extracol={c2};
+
+      else
+
+          Colours = questdlg('Do you want different colour for each of the distinct recording periods?',...
+            'What data',...
+            'Yes', 'No','No');
+
+            switch Colours
+                case 'Yes'
+
+                    extracol=cell(length(startZ),1);
+
+                    for i=1:length(startZ)
+
+                        c2 = uisetcolor([1 0.4470 0.7410]);
+
+                        extracol{i}=c2;
+                    end
+ 
+                case 'No'
+            
+                    c2 = uisetcolor([1 0.4470 0.7410]);
+
+                    extracol=cell(length(startZ),1);
+
+                    extracol(:)={c2};
+            
+            end
+
+      end
         
 end
 
@@ -94,7 +147,6 @@ for i = 1:P
 end
 %%
 % Define coordinates for the vertices of the cubes
-
 [X, Y, Z] = meshgrid(1:N, 1:M, 1:0.5:P);
 fig = figure('Visible', 'off');
 % Define the aspect ratio. We can adapt this to what we want
@@ -104,11 +156,55 @@ daspect(aspect_ratio);
 s=isosurface(X, Y, Z, newMatrix,0.1);
 p = patch(s);
 isonormals(X, Y, Z, newMatrix,p)
+
+
+% Original pixel limits
+xPixelLimit = size(newMatrix,2);
+yPixelLimit = size(newMatrix,1);
+
+% Scale factor (pixel to um)
+scaleFactor = pxl_size;
+
+xmidPointMicrons = (xPixelLimit / 2) * scaleFactor;
+ymidPointMicrons = (yPixelLimit / 2) * scaleFactor;
+
+xendMicrons = xPixelLimit * scaleFactor;
+yendMicrons = yPixelLimit * scaleFactor;
+
+% Tick positions in pixels (start, midpoint, end)
+xTickPositions = [1, xPixelLimit / 2, xPixelLimit-1];
+yTickPositions = [1, yPixelLimit / 2, yPixelLimit-1];
+
+% Corresponding tick labels in microns
+xtickLabels = {num2str(0), num2str(fix(xmidPointMicrons)), num2str(fix(xendMicrons))};
+ytickLabels = {num2str(0), num2str(fix(ymidPointMicrons)), num2str(fix(yendMicrons))};
+
+% Set the custom ticks and labels for x and y axes
+xticks(xTickPositions);
+yticks(yTickPositions);
+xticklabels(xtickLabels);
+yticklabels(ytickLabels);
+
+
+% if exist('P_small','var') %if this variable exist plot only up to where the data is
+% 
+%     zMin = 0; % Define your minimum x-value
+%     zMax = P_small*2+1; % Define your maximum y-value
+% 
+% Generate new tick labels
+
+zticks(0:100:P); % Set z-ticks at every 100 seconds
+zticklabels(0:100:P); % Label z-ticks 
+
+zlim([0 P]); % Set the limits for the z-axis
+% 
+% end
+%
 % By typing this on comand line while looking at the figure
 % [caz,cel] = view
 % Get the azimuth (caz) and elevation (cel) angles for this plot.
 view(3); % This can be updated to view(caz cel) to get a consistent point of view for the vector graphics
-
+%
 switch Epoch
     case 'No'
         
@@ -119,7 +215,7 @@ switch Epoch
         zlabel('Time (s)');
 
     case 'Yes'
-        %This code sets a different color for the specified section of the isosurface plot along the z-axis while leaving the rest of the isosurface with the default color.
+        %This code sets a different color for the specified section(s) of the plot along the z-axis while leaving the rest of the isosurface with the default color.
         % Set the default color for the entire isosurface
         set(p, 'FaceColor', 'flat');
         set(p, 'EdgeColor', 'none');
@@ -135,30 +231,34 @@ switch Epoch
 
         % Compute the z-values of the vertices
         zValues = vertices(:, 3);
-
-        % Find the vertices within the specified z-range
-        indices = find(zValues >= startZ & zValues <= endZ);
-
+       
         % Create a color matrix for the vertices based on their Z-values
         vertexColors = repmat(c, size(vertices, 1), 1);
 
-        % Set the different color for the specified section
-        vertexColors(indices, :) = repmat(c2, length(indices), 1);
 
+        for i=1:length(startZ)
+        
+            % Find the vertices within the specified z-range
+            indices = find(zValues >= startZ(i) & zValues <= endZ(i));
+
+
+            % Set the different color for the specified section
+            vertexColors(indices, :) = repmat(extracol{i}, length(indices), 1);
+
+        end
         % Update the 'FaceVertexCData' property to apply the specified colors
         p.FaceVertexCData = vertexColors;
 
         % Set the 'FaceColor' property to 'interp' to use FaceVertexCData
         set(p, 'FaceColor', 'interp');
+        
 
 end
 
 
-
-
-
-%%
+%
 exportgraphics(fig,[filename(1:end-4),'.png'],'Resolution',1200)
+%%
 save([filename(1:end-4),'.mat'], 'fig');
 % You can load the interactive figure and replot it by typing this on the
 % command window 
@@ -351,3 +451,4 @@ oimg=single(oimg);
 
 fprintf('New file was loaded successfully. Elapsed time : %.3f s \n', toc(tStart));
 end
+

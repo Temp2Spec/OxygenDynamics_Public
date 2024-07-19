@@ -1,0 +1,137 @@
+OxySinkArea_um : the mean surface of each oxygen sink locus in microns (calculated based on pixel size input) for all mice/experimental groups. The mouse# can be seen next to each datapoint
+
+OxySinkFilledArea_um: same as OxySinkArea_um but this is for filled area in case of suboptimal detection of oxygen concentraion sinks
+
+OxySinkDiameter_um: the mean diameter of each oxygen sink locus in microns
+
+OxySinkPerimeter_um: the mean perimeter of each oxygen sink event in microns
+
+OxySinkArea_Norm: the mean surface of each oxygen sink event normalised to the area of paremchyma recorded for each mouse recording
+
+OxySinkArea_Filled_Norm: same as OxySinkArea_Norm but this is for filled area in case of suboptimal detection of oxygen concentraion sinks
+
+NumOxySinkEvents_Norm: the number of hypoxic events per minute each oxygen sink locus
+
+MeanOxySinkEvent_Duration: the mean duration of hypoxic events for each oxygen sink locus in seconds
+
+MeanOxySinkEvent_NormAmp: the mean amplitude of signal change of hypoxic events for each oxygen sink locus relative to the signal for 20sec before each event. 
+
+MeanOxySinkEvent_SizeMod: the mean size modulation of hypoxic events for each oxygen sink locus. This (size of sink at the end-size of sink at the start)/size of sink at start. Concretelly, negative size modulation means the sink starts larger and shrinks with time.
+
+Same for oxygen concentration surges
+OxySurgeArea_um
+OxySurgeFilledArea_um
+OxySurgeDiameter_um
+OxySurgePerimeter_um
+OxySurgeArea_Norm
+OxySurgeArea_Filled_Norm
+NumOxySurgeEvents_Norm
+MeanOxySurgeEvent_Duration
+MeanOxySurgeEvent_NormAmp
+MeanOxySurgeEvent_SizeMod
+
+SinksEvents X different experimental groups: each sheet contains the alligned signal traces (arbitrary units)for each oxygen concentration sink event (rows). The signal of each event has been normalized to be 0 at the start.
+
+ROI Mean: traces with the mean signal value (arbitrary units) across all spatial bins covering the recording area for each mouse/experimental group.  
+
+ROI CovCoef: traces with the covariance coefficient across signal from all spatial bins covering the recording area for each mouse/experimental group.  Higher values suggests more pronounced spatial organisation of oxygen concetration signal. Widespread signal patterns lead to decrease in covariance coefficient.
+
+ROI Entropy: traces with the Shannon entropy of the signal across all spatial bins covering the recording area for each mouse/experimental group. Similar to covariance coefficient, higher values suggests more pronounced spatial organisation of oxygen concetration signal. Widespread signal patterns lead to decrease in covariance coefficient.
+
+OxySinks HowMany: traces with the total number of ongoing oxygen concentration sinks at any given frame
+
+OxySinksArea_Norm: traces with the total area part of oxygen conctration sinks at any given frame normalised to the area of paremchyma recorded for each mouse recording
+
+Same for oxygen concentration surges:
+OxySurgesHowMany
+OxySurgesArea
+
+ROIdiff Mean: traces with the mean first differential (change) of signal value (arbitrary units) across all spatial bins covering the recording area for each mouse/experimental group. This reflects the change in signal of recording area as a whole.
+
+ROIdiff CovCoef: traces with the covariance coefficient across the signal differential (change) from all spatial bins covering the recording area for each mouse/experimental group. Higher values suggests more pronounced spatial organisation of oxygen concetration signal changes. Widespread signal pattern changes lead to decrease in covariance coefficient.
+
+ROIdiff Entropy: traces with the Shannon entropy across the signal differential (change) from all spatial bins covering the recording area for each mouse/experimental group. Similar to covariance coefficient, higher values suggests more pronounced spatial organisation of oxygen concetration signal changes. Widespread signal pattern changes lead to decrease in covariance coefficient. 
+
+OxySinksArea_um: traces with the total area part of oxygen conctration sinks at any given frame in microns
+
+ROI Mean vs CovCoef: correlation of between the mean signal value trace and the covariance coefficient trace for each mouse. Higher values means that when we have an over surge in oxygen concentration the spatial distribution of the singal is more pronounced. On the other hand negative values suggest that signal surges lead to more spatial homogeneity and therefore less covariance coefficient. The order of mice for each experimental group is the same as in previous sheets (but vertical)
+
+ROI Mean vs Entropy: homologous concept to ROI Mean vs CovCoef
+
+CovCoef vs Entropy: control analysis to see how well the two expressions of spatial homogeneity correlate. 
+
+ROIdiff Mean vs diffCovCoef: correlation of mean signal differential (change) and covariance coefficient differential. Higher correlation suggests that the change of signal towards oxygen surges and sinks coincides with increase and decrease in spatial homogenetity of the same signal.
+
+ROIdiff Mean vs diffEntropy: homologous concept to ROIdiff Mean vs diffCovCoef
+
+diffCovCoef vs diffEntropy: control analysis to see how well the two expressions of changes in spatial homogeneity correlate. 
+
+OxySinksArea vs CovCoef: correlation between the total area belonging to oxygen concentration sink loci and the spatial heterogeneity. Higher values suggests that when the oxygen sink area is smaller and larger, the spatial heterogeneity is increasing and decreasing accordingly. 
+
+OxySinksArea vs Entropy: homologous concept to OxySinksArea vs CovCoef
+
+Same for oxygen concentration surges. 
+OxySurgesArea vs CovCoef
+OxySurgesArea vs Entropy
+
+
+ROI MeanLPawbin
+ROI MeanRPawbin
+ROI MeanPupilbin
+ROI CovCoefLPawbin
+ROI CovCoefRPawbin
+ROI CovCoefPupilbin
+ROI EntropyLPawbin
+ROI EntropyRPawbin
+ROI EntropyPupilbin
+OxySinks HowManyLPawbin
+OxySinks HowManyRPawbin
+OxySinks HowManyPupilbin
+OxySinksArea_NormLPawbin
+OxySinksArea_NormRPawbin
+OxySinksArea_NormPupilbin
+OxySurgesHowManyLPawbin
+OxySurgesHowManyRPawbin
+OxySurgesHowManyPupilbin
+OxySurgesAreaLPawbin
+OxySurgesAreaRPawbin
+OxySurgesAreaPupilbin
+ROIdiff MeanLPawbin
+ROIdiff MeanRPawbin
+ROIdiff MeanPupilbin
+ROIdiff CovCoefLPawbin
+ROIdiff CovCoefRPawbin
+ROIdiff CovCoefPupilbin
+ROIdiff EntropyLPawbin
+ROIdiff EntropyRPawbin
+ROIdiff EntropyPupilbin
+OxySinksArea_umLPawbin
+OxySinksArea_umRPawbin
+OxySinksArea_umPupilbin
+
+ROI MeanPooled_Traces
+ROI CovCoefPooled_Traces
+ROI EntropyPooled_Traces
+OxySinks HowManyPooled_Traces
+OxySinksArea_NormPooled_Traces
+OxySurgesHowManyPooled_Traces
+OxySurgesAreaPooled_Traces
+ROIdiff MeanPooled_Traces
+ROIdiff CovCoefPooled_Traces
+ROIdiff EntropyPooled_Traces
+OxySinksArea_umPooled_Traces
+ROI_MeanTraceSnip_PupilEvents
+ROI_MeanTraceSnip_PuffEvents
+ROI_MeanTraceSnip_WhiskEvents
+
+
+
+
+
+
+
+
+
+
+
+
